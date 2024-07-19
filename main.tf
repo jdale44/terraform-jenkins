@@ -12,13 +12,14 @@ module "security_group" {
   ec2_sg_name         = "SG for EC2 to enable HTTP(8080)"
   vpc_id              = module.networking.dev_proj_1_vpc_id
   ec2_jenkins_sg_name = "Allow port 8080 for jenkins"
+  ec2_sonar_sg_name   = "Allow port 9000 for Sonar"
 }
 
 module "jenkins" {
   source                    = "./jenkins"
   ami_id                    = var.ec2_ami_id
   instance_type             = "t2.medium"
-  tag_name                  = "Jenkins:Ubuntu Linux EC2"
+  tag_name                  = "Jenkins:Master"
   key_name                  =  "jenkins.pub"
   subnet_id                 = tolist(module.networking.dev_proj_1_public_subnets)[0]
   sg_for_jenkins            = [module.security_group.sg_ec2_sg_ssh_http_id, module.security_group.sg_ec2_jenkins_port_8080]
@@ -30,14 +31,24 @@ module "jenkins-agent" {
   source                    = "./jenkins-agent"
   ami_id                    = var.ec2_ami_id
   instance_type             = "t2.medium"
-  tag_name                  = "Jenkins:Ubuntu Linux EC2"
+  tag_name                  = "Jenkins:Agent"
   key_name                  =  "jenkins.pub"
   subnet_id                 = tolist(module.networking.dev_proj_1_public_subnets)[0]
   sg_for_jenkins            = [module.security_group.sg_ec2_sg_ssh_http_id, module.security_group.sg_ec2_jenkins_port_8080]
   enable_public_ip_address  = true
   user_data_install_jenkins = templatefile("./jenkins-runner-script/jenkins-agent-installer.sh", {})
   }
-
+module "Sonar-Server" {
+  source                    = "./Sonar-Server"
+  ami_id                    = var.ec2_ami_id
+  instance_type             = "t2.small"
+  tag_name                  = "Sonar-Server"
+  key_name                  =  "jenkins.pub"
+  subnet_id                 = tolist(module.networking.dev_proj_1_public_subnets)[0]
+  sg_for_jenkins            = [module.security_group.sg_ec2_sg_ssh_http_id, module.security_group.sg_ec2_sonar_port_9000]
+  enable_public_ip_address  = true
+  user_data_install_jenkins = templatefile("./jenkins-runner-script/sonar-server-installer.sh", {})
+}
 module "lb_target_group" {
   source                   = "./load-balancer-target-group"
   lb_target_group_name     = "jenkins-lb-target-group"

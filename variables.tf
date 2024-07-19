@@ -38,3 +38,8 @@ variable "ec2_ami_id" {
   type        = string
   description = "DevOps Project 1 AMI Id for EC2 instance"
 }
+variable "ec2_sonar_sg_name" {
+  description = "Name for the Sonar security group"
+  type        = string
+  default     = "my-sonar-security-group"
+}

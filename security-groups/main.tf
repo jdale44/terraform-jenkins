@@ -1,6 +1,8 @@
 variable "ec2_sg_name" {}
 variable "vpc_id" {}
 variable "ec2_jenkins_sg_name" {}
+variable "ec2_sonar_sg_name" {}
+  
 
 output "sg_ec2_sg_ssh_http_id" {
   value = aws_security_group.ec2_sg_ssh_http.id
@@ -8,6 +10,10 @@ output "sg_ec2_sg_ssh_http_id" {
 
 output "sg_ec2_jenkins_port_8080" {
   value = aws_security_group.ec2_jenkins_port_8080.id
+}
+
+output "sg_ec2_sonar_port_9000" {
+  value = aws_security_group.ec2_sonar_port_9000.id
 }
 
 resource "aws_security_group" "ec2_sg_ssh_http" {
@@ -33,7 +39,7 @@ resource "aws_security_group" "ec2_sg_ssh_http" {
     protocol    = "tcp"
   }
 
-  # enable http
+  # enable https
   ingress {
     description = "Allow HTTP request from anywhere"
     cidr_blocks = ["0.0.0.0/0"]
@@ -61,7 +67,7 @@ resource "aws_security_group" "ec2_jenkins_port_8080" {
   description = "Enable the Port 8080 for jenkins"
   vpc_id      = var.vpc_id
 
-  # ssh for terraform remote exec
+  
   ingress {
     description = "Allow 8080 port to access jenkins"
     cidr_blocks = ["0.0.0.0/0"]
@@ -71,7 +77,26 @@ resource "aws_security_group" "ec2_jenkins_port_8080" {
   }
 
   tags = {
-    Name = "Security Groups to allow SSH(22) and HTTP(80)"
+    Name = "Security Groups to allow (8080)"
   }
 }
 
+
+resource "aws_security_group" "ec2_sonar_port_9000" {
+  name        = var.ec2_sonar_sg_name
+  description = "Enable the Port 9000 for sonar"
+  vpc_id      = var.vpc_id
+
+
+  ingress {
+    description = "Allow 9000 port to access sonar"
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 9000
+    to_port     = 9000
+    protocol    = "tcp"
+  }
+
+  tags = {
+    Name = "Security Groups to allow sonar"
+  }
+}
