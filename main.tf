@@ -41,14 +41,15 @@ module "jenkins-agent" {
 module "Sonar-Server" {
   source                    = "./Sonar-Server"
   ami_id                    = var.ec2_ami_id
-  instance_type             = "t2.small"
+  instance_type             = "t2.medium"
   tag_name                  = "Sonar-Server"
-  key_name                  =  "jenkins.pub"
+  key_name                  = "jenkins.pub"
   subnet_id                 = tolist(module.networking.dev_proj_1_public_subnets)[0]
-  sg_for_jenkins            = [module.security_group.sg_ec2_sg_ssh_http_id, module.security_group.sg_ec2_sonar_port_9000]
+  sg_for_sonar              = [module.security_group.sg_ec2_sg_ssh_http_id, module.security_group.sg_ec2_sonar_port_9000]
   enable_public_ip_address  = true
   user_data_install_jenkins = templatefile("./jenkins-runner-script/sonar-server-installer.sh", {})
 }
+
 module "lb_target_group" {
   source                   = "./load-balancer-target-group"
   lb_target_group_name     = "jenkins-lb-target-group"
