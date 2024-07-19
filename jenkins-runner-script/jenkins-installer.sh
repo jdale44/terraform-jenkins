@@ -1,6 +1,6 @@
 #!/bin/bash
 sudo apt-get update
-yes | sudo apt install openjdk-11-jdk-headless
+yes | sudo apt install openjdk-17-jdk-headless
 echo "Waiting for 30 seconds before installing the jenkins package..."
 sleep 30
 sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
