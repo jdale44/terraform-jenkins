@@ -26,10 +26,8 @@ resource "aws_instance" "jenkins_ec2_instance_ip" {
   vpc_security_group_ids      = var.sg_for_sonar
   associate_public_ip_address = var.enable_public_ip_address
   
-  ebs_block_device {
-    device_name = "/dev/sda1"
+   root_block_device {
     volume_size = 25
-    volume_type = "gp2"
   }
 
   user_data = var.user_data_install_jenkins
