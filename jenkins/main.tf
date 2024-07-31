@@ -30,6 +30,9 @@ resource "aws_instance" "jenkins_ec2_instance_ip" {
   tags = {
     Name = var.tag_name
   }
+  root_block_device {
+    volume_size = 25
+  }
   key_name                    = aws_key_pair.my_key_pair.key_name
   subnet_id                   = var.subnet_id
   vpc_security_group_ids      = var.sg_for_jenkins
