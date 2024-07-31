@@ -31,10 +31,8 @@ resource "aws_instance" "jenkins_ec2_instance_ip" {
   associate_public_ip_address = var.enable_public_ip_address
   
   user_data = var.user_data_install_jenkins
-  ebs_block_device {
-    device_name = "/dev/sda1"
+  root_block_device {
     volume_size = 25
-    volume_type = "gp2"
   }
   metadata_options {
     http_endpoint = "enabled"  # Enable the IMDSv2 endpoint
