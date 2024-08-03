@@ -6,7 +6,7 @@ sudo apt install openjdk-17-jdk-headless -y
 sudo apt install maven -y
 sudo apt install docker.io -y
 sudo groupadd docker
-group 'docker' already exists
+sudo chmod 666 /var/run/docker.sock
 sudo usermod -aG docker $USER
 newgrp docker
 #install trivy
